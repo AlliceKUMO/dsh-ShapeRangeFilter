@@ -1,19 +1,15 @@
 # 形状范围筛选 · Eagle Shape Range
 
-一个 [Eagle](https://eagle.cool) 插件:**按「近似形状 / 长宽比区间」筛选素材**。
+**[English](README.en.md)** ｜ 简体中文
+
+一个 [Eagle](https://eagle.cool) 插件:**按「近似形状 / 长宽比区间 / 文件类型」筛选素材**。
 
 Eagle 原生的形状筛选只有精确匹配 —— 「方形」要求 `width === height`,「4:3」「16:9」要求比值浮点精确相等 ——
 没有容差,也没有长宽比区间。本插件补上这个缺口:近似方形、任意目标比例 ± 容差、长宽比区间,
 并可结合按文件类型的筛选。
 
-> **English TL;DR** — An Eagle plugin that filters assets by *approximate* aspect ratio
-> (configurable tolerance) and by ratio ranges, which Eagle's built-in shape filter cannot do
-> (it only matches exactly: `square` means `width === height`). It indexes a library's
-> `metadata.json` files directly (58k items in ~1.4 s, 80 ms from cache) instead of going
-> through `eagle.item.get()`, which serialises every Item over IPC. UI is bilingual-agnostic
-> (Chinese), with multi-select, a ratio-distribution histogram and batch actions.
-> Why the native filter can't be extended is documented in
-> [`docs/native-filter-findings.md`](docs/native-filter-findings.md).
+> 只想快速上手:从 [**Releases**](../../releases) 下载 `.eagleplugin` 双击安装,
+> 或把 `eagle-shape-range` 整个文件夹放进 `%APPDATA%\Eagle\Plugins\`。
 
 ---
 
@@ -136,7 +132,8 @@ await it.save();
 
 确保 `manifest.json` 就在这一层。**重启 Eagle**,按 `P` 打开插件面板即可看到「形状范围筛选」。
 
-**方式 B**:`pwsh -File tools/pack.ps1` 生成 `dist/*.eagleplugin`,双击安装。
+**方式 B**:从 [**Releases**](../../releases) 下载 `.eagleplugin` 双击安装;
+或自己构建 —— `pwsh -File tools/pack.ps1` 生成 `dist/*.eagleplugin`,
 若提示脚本未签名,用 `pwsh -ExecutionPolicy Bypass -File tools/pack.ps1`。
 
 | 依赖 | 要求 |
