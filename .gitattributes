@@ -1,0 +1,8 @@
+# Normalise line endings in the repository so Windows, macOS and Linux all
+# check out the same bytes. Everything here is text except the binary assets.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.eagleplugin binary

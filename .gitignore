@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+# build output (generate with tools/pack.ps1)
+dist/
+
+# runtime state the plugin writes into its own folder once installed
+index-cache.json
+library-path.txt
+
+# logs and OS noise
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,19 @@
+{
+	"id": "SHPRNG4K7Q2ZM",
+	"version": "2.0.0",
+	"platform": "all",
+	"arch": "all",
+	"name": "形状范围筛选",
+	"logo": "/logo.png",
+	"keywords": ["shape", "ratio", "aspect ratio", "方形", "长宽比", "形状筛选", "容差"],
+	"devTools": true,
+	"main": {
+		"url": "index.html",
+		"width": 1040,
+		"height": 760,
+		"minWidth": 760,
+		"minHeight": 560,
+		"resizable": true,
+		"backgroundColor": "#1f2023"
+	}
+}
