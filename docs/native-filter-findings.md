@@ -129,7 +129,8 @@ smartFolder / contextMenu / extraModule / library / dialog / clipboard / drag / 
 |---|---|
 | 启动后立刻退出,且**完全不写日志** | 环境里有 `ELECTRON_RUN_AS_NODE=1`(某些 Node 工具链会设置它)。Electron 会以 Node 模式运行、不开窗口。启动前清掉该变量即可。 |
 | 启动几秒后 `mainWindow has crashed`,随后 `App crashes within 10s` + 禁用沙箱 + 退出 | Eagle 的崩溃循环保护。要查的是**主窗口为什么崩**,而不是启动参数。 |
-| 启动后 1~2 秒就崩,且转储的故障地址每次完全相同 | 先看崩溃前最后创建的是哪个 **service 插件**(它们随 Eagle 一起启动)。本机就是某个 service 插件被创建后约 0.4~1.1 秒发生崩溃;把它的目录移出 `Plugins\` 后,同一条启动路径连测 4 次均正常。逐个停用 service 插件即可定位。 |
+| 崩溃在**每一次**会话都发生(实测 45 秒 ~ 8 分钟),且转储的故障地址固定 | 这是 Eagle 自身的可复现崩溃,与插件无关。注意**插件创建顺序会造成时间上的假相关**:service 插件启动得早,早期崩溃自然都紧跟在它后面。本机就曾据此怀疑某个 service 插件,但把它停用后每次会话照样崩 —— 判断因果必须做「停用它再复现」的对照。 |
+| 想确认 Eagle 到底有没有在运行 | **不要用进程枚举**:在某些受限/沙箱环境里 `tasklist` 会返回 `Access denied`、`Get-Process` 会静默返回空,于是「看不到进程」被误判成「Eagle 已经退出」。用 **本地 API 端口 `41593`/`41595` 是否在监听**,或日志文件是否还在活动来判断。 |
 | 每次启动固定出现 2 条 `TypeError: Cannot read properties of null (reading 'forEach') at loadManifest` | Eagle 自身的 i18n bug:插件 manifest 有 `languages` 字段、目录里有 `_locales`,但 manifest 正文**不含任何 `{{...}}` 占位符**时,`string.match(/{{(.*?)}}/gm)` 返回 `null`,紧接的 `.forEach` 抛错(源码 `app/js/plugin/index.js` 约 3115 行)。异常被 catch,不影响启动。 |
 | 插件目录里多出一个以插件 id 命名、却没有 `manifest.json` 的子目录 | Eagle 把窗口状态写到 `<Plugins>/<id>/window-state.json`。若插件目录名不等于自己的 id,就会多出这个目录。**无害**:`loadManifest` 在 `fs.existsSync(manifestPath)` 为假时直接返回,不会报错。 |
 
