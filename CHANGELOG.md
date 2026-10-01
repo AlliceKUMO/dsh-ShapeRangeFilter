@@ -2,6 +2,16 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## 2.0.1
+
+**修复**
+
+- `manifest.json` 的 `devTools` 从 `true` 改为 `false`。之前漏关了调试开关,
+  导致**每次打开插件都会自动弹出 Developer Tools 窗口**。
+  现在需要调试时,可临时把该项改回 `true`(或在插件窗口按 F12)。
+- 顺手加了一条回归测试:`manifest.devTools` 必须是 `false`,
+  避免这个调试残留再次被带进发布产物。
+
 ## 2.0.0
 
 重写取数方式与界面。

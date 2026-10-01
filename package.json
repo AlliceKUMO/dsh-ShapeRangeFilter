@@ -1,6 +1,6 @@
 {
   "name": "dsh-shape-range-filter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
   "description": "Eagle 插件:按「近似形状 / 长宽比区间 / 文件类型」筛选素材,补上原生形状筛选只能精确匹配的缺口",
   "keywords": [

@@ -219,5 +219,8 @@ test('manifest.json is valid and its entry files exist', () => {
   assert.ok(mf.main && mf.main.url, 'manifest.main.url is required for a window plugin');
   assert.ok(fs.existsSync(path.join(ROOT, mf.main.url)), 'manifest.main.url file is missing');
   // Eagle reads devTools from the top level, not from inside main.
-  assert.equal(typeof mf.devTools, 'boolean');
+  // It must be exactly false: `true` makes Eagle pop the DevTools window every
+  // time the plugin opens — a debugging leftover that must never ship.
+  assert.equal(mf.devTools, false,
+    'manifest.devTools must be false, otherwise Eagle opens Developer Tools on every launch');
 });

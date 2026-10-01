@@ -1,12 +1,12 @@
 {
 	"id": "SHPRNG4K7Q2ZM",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"platform": "all",
 	"arch": "all",
 	"name": "形状范围筛选",
 	"logo": "/logo.png",
 	"keywords": ["shape", "ratio", "aspect ratio", "方形", "长宽比", "形状筛选", "容差"],
-	"devTools": true,
+	"devTools": false,
 	"main": {
 		"url": "index.html",
 		"width": 1040,
