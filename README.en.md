@@ -132,15 +132,23 @@ tags. Up to 3000 items per run.
 
 ## 3. Install
 
-**Option A (recommended)** — drop the whole `eagle-shape-range` folder into Eagle's plugin
-directory:
+**Option A (recommended)** — copy the `eagle-shape-range` folder into Eagle's plugin
+directory, ideally renaming it to the plugin id:
 
 ```
-%APPDATA%\Eagle\Plugins\eagle-shape-range
+%APPDATA%\Eagle\Plugins\SHPRNG4K7Q2ZM
 ```
 
 `manifest.json` must sit at that level. **Restart Eagle** and press `P` to find
 "形状范围筛选" in the plugin panel.
+
+> The folder name is free-form — Eagle identifies a plugin by its `manifest.json` — but
+> using the id matches Eagle's own convention (every plugin installed from the plugin
+> centre has a folder named after its id). Eagle writes window state to
+> `<plugin folder>/window-state.json`; when the folder name differs from the id it creates
+> a separate id-named folder for that file. Measured as **harmless**: `loadManifest`
+> returns early when the manifest file is absent, so nothing errors — you just get one
+> extra folder. Installing via the `.eagleplugin` (Option B) uses the id automatically.
 
 **Option B** — download the packaged `.eagleplugin` from
 [Releases](../../releases), or build it with `pwsh -File tools/pack.ps1`

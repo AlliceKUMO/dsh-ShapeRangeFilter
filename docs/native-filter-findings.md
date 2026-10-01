@@ -106,17 +106,36 @@ smartFolder / contextMenu / extraModule / library / dialog / clipboard / drag / 
 `The host file has been tampered with and the software cannot be opened.`
 (连 hosts 文件被动过都会拒绝启动,属于有意为之的反修改防护)。
 
-### 如果已经试过改 `app.asar`,恢复要两步
+### 如果已经试过改 `app.asar`,恢复步骤
 
-1. 把 `app.asar` 换回原始文件;
-2. **删除 `%APPDATA%\Eagle\Certifications`**(一个 64 字节的校验文件)。
+1. 把 `app.asar` 换回原始文件(**这一步是必须的**)。
+2. 如果换回后 Eagle 仍然起不来,继续看下一节 —— 那可能已经不是防篡改的问题了。
 
-只做第 1 步是不够的 —— 那个「已篡改」状态已经落盘,不删掉它 Eagle 依然起不来;
-删掉后 Eagle 下次启动会自行重建该文件并恢复正常。
+本机实测的经过是:换回原始 `app.asar` 后 Eagle 依旧无法启动(连续 4 次尝试、且不写任何日志);
+此后删掉 `%APPDATA%\Eagle\Certifications`(64 字节的校验文件)后立刻恢复,且 Eagle 会自行重建该文件。
 
-> 顺带一个和插件无关、但排查时很容易误判的点:若在带 `ELECTRON_RUN_AS_NODE=1`
-> 的环境里启动 Eagle(某些 Node 工具链会设置它),Electron 会以 Node 模式运行、
-> 不开窗口直接退出,而且**不写任何日志**。启动 Eagle 前需要清掉这个变量。
+但要如实说明:后来我在 Eagle 的启动日志里发现了另一条机制,两者可能混在一起了,
+所以**不要把「删 `Certifications`」当成确定的修复方法**:
+
+- `App crashes within 10s.` —— Eagle 检测到主窗口在启动后 10 秒内崩溃时会打印这行,
+  接着 `The sandbox feature has already been disabled.` 并退出。
+- 也就是说,**反复崩溃本身就会让 Eagle「起不来」**,表现得和防篡改锁定一模一样。
+- 而这台机器上的 Eagle 从 2026-07-31 起就几乎每天崩一次(`mainWindow has crashed`),
+  与本仓库的插件无关。所以当时那次「起不来」很可能主要是崩溃循环,而非证书文件。
+
+### 排查 Eagle 启动问题时的几个坑(均在本机实测)
+
+| 现象 | 真实原因 |
+|---|---|
+| 启动后立刻退出,且**完全不写日志** | 环境里有 `ELECTRON_RUN_AS_NODE=1`(某些 Node 工具链会设置它)。Electron 会以 Node 模式运行、不开窗口。启动前清掉该变量即可。 |
+| 启动几秒后 `mainWindow has crashed`,随后 `App crashes within 10s` + 禁用沙箱 + 退出 | Eagle 的崩溃循环保护。要查的是**主窗口为什么崩**,而不是启动参数。 |
+| 每次启动固定出现 2 条 `TypeError: Cannot read properties of null (reading 'forEach') at loadManifest` | Eagle 自身的 i18n bug:插件 manifest 有 `languages` 字段、目录里有 `_locales`,但 manifest 正文**不含任何 `{{...}}` 占位符**时,`string.match(/{{(.*?)}}/gm)` 返回 `null`,紧接的 `.forEach` 抛错(源码 `app/js/plugin/index.js` 约 3115 行)。异常被 catch,不影响启动。 |
+| 插件目录里多出一个以插件 id 命名、却没有 `manifest.json` 的子目录 | Eagle 把窗口状态写到 `<Plugins>/<id>/window-state.json`。若插件目录名不等于自己的 id,就会多出这个目录。**无害**:`loadManifest` 在 `fs.existsSync(manifestPath)` 为假时直接返回,不会报错。 |
+
+> 诊断主窗口崩溃时,**转储里的故障地址比日志有用得多**。本机三次崩溃都是
+> `0xC0000005` 读越界、故障地址 `Eagle.exe+0x3701e70`,完全一致 —— 说明是可复现的
+> 确定性 bug,而不是随机内存损坏。同一次崩溃既没有 Windows 事件日志记录、也没有 WER 报告,
+> 只有 Eagle 自带的 Crashpad 留下了转储(minidump 里的异常流给出异常码与地址)。
 
 ## 5. 所以可行的做法
 

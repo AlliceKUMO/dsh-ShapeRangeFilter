@@ -124,13 +124,19 @@ await it.save();
 
 ## 三、安装
 
-**方式 A(推荐)**:把整个 `eagle-shape-range` 文件夹放到 Eagle 的插件目录:
+**方式 A(推荐)**:把仓库里的 `eagle-shape-range` 文件夹复制到 Eagle 的插件目录,建议**改名为插件 id**:
 
 ```
-%APPDATA%\Eagle\Plugins\eagle-shape-range
+%APPDATA%\Eagle\Plugins\SHPRNG4K7Q2ZM
 ```
 
 确保 `manifest.json` 就在这一层。**重启 Eagle**,按 `P` 打开插件面板即可看到「形状范围筛选」。
+
+> 目录名其实随意(插件靠 `manifest.json` 识别),沿用 id 是为了与 Eagle 自身一致 ——
+> 从插件中心安装的插件,目录名都等于自己的 id。另外 Eagle 会把窗口状态写进
+> `<插件目录>/window-state.json`;目录名不等于 id 时它会另建一个以 id 命名的目录来放这个文件
+> (实测**无害**:`loadManifest` 在清单不存在时直接返回,不会报错,只是目录会多一个)。
+> 用方式 B 的 `.eagleplugin` 安装时,Eagle 会自动采用 id 作为目录名。
 
 **方式 B**:从 [**Releases**](../../releases) 下载 `.eagleplugin` 双击安装;
 或自己构建 —— `pwsh -File tools/pack.ps1` 生成 `dist/*.eagleplugin`,
